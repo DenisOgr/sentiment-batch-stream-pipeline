@@ -1,5 +1,4 @@
 import argparse
-
 from google.cloud import storage
 from pyspark.ml import PipelineModel
 from pyspark.sql import SparkSession
@@ -41,7 +40,7 @@ def main():
 
     schema = StructType([
         StructField("tweet", StringType(), False),
-        StructField("created_at", StringType(), False),
+        StructField("datetime", StringType(), False),
         StructField("replies_count", IntegerType(), False),
         StructField("retweets_count", IntegerType(), False),
         StructField("likes_count", IntegerType(), False),
@@ -50,7 +49,7 @@ def main():
             .option("header", "true")
             .load(args.path_to_source, schema=schema)
             .select(["replies_count", "retweets_count", "likes_count", F.col("tweet").alias("text"),
-                     F.to_timestamp('created_at', 'yyyy-MM-dd HH:mm:ss').alias('dt')])
+                     F.to_timestamp('datetime', 'yyyy-MM-dd HH:mm:ss').alias('dt')])
             .where(F.col("tweet").isNotNull())
             )
 
@@ -63,7 +62,6 @@ def main():
 
     logger.info(f"Storing results...")
     pred_sentiments = [str(f"{r.dt}, {r.prediction}") for r in predicted_data.select(['dt', 'prediction']).collect()]
-    print(pred_sentiments)
     storage.Blob("/".join(blob_path), storage_bucket).upload_from_string("\n".join(pred_sentiments))
 
 

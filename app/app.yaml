@@ -1,0 +1,12 @@
+runtime: python37
+env: standard
+manual_scaling:
+  instances: 1
+resources:
+  cpu: 1
+  memory_gb: 0.5
+  disk_size_gb: 10
+
+env_variables:
+  RESULTS_BUCKET: sentiment-twitter-analys
+  TWEETS_SCRAP_BUCKET: sentiment-twitter-analys-scrap-job

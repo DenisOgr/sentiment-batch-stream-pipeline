@@ -1,0 +1,54 @@
+jobs:
+- pysparkJob:
+    args:
+    - to-be-determined
+    - to-be-determined
+    - --model_version=v5
+    mainPythonFileUri: gs://sentiment-twitter-analys/src/predict.py
+    pythonFileUris:
+    - gs://sentiment-twitter-analys/src/utils.py
+  stepId: predict
+placement:
+  managedCluster:
+    clusterName: twitter-analys-predict
+    config:
+      configBucket: sentiment-twitter-analys
+      gceClusterConfig:
+        metadata:
+          PIP_PACKAGES: beautifulsoup4==4.9.3 nltk==3.5 google-cloud-storage==1.35.0
+        zoneUri: us-central1-b
+      initializationActions:
+        executableFile: gs://goog-dataproc-initialization-actions-europe-west2/python/pip-install.sh
+      masterConfig:
+        machineTypeUri: n1-standard-4
+        numInstances: 1
+        diskConfig:
+          bootDiskSizeGb: 500
+      workerConfig:
+        numInstances: 2
+        machineTypeUri: n1-standard-2
+        diskConfig:
+          bootDiskSizeGb: 500
+      secondaryWorkerConfig:
+        numInstances: 0
+        diskConfig:
+          bootDiskSizeGb: 500
+      softwareConfig:
+        imageVersion: '1.5'
+        properties:
+          dataproc:dataproc.logging.stackdriver.enable: 'true'
+          dataproc:dataproc.logging.stackdriver.job.driver.enable: 'true'
+          dataproc:jobs.file-backed-output.enable: 'true'
+parameters:
+- description: 'Full path to folder with twitters. Started with gs://'
+  fields:
+  - jobs['predict'].pysparkJob.args[0]
+  name: PATH_TO_SOURCE
+- description: 'Full path to folder where store results. Started with gs://'
+  fields:
+  - jobs['predict'].pysparkJob.args[1]
+  name: PATH_TO_RESULTS
+- description: 'Model version. Default v5. Example: --model_version=v5. '
+  fields:
+  - jobs['predict'].pysparkJob.args[2]
+  name: MODEL_VERSION

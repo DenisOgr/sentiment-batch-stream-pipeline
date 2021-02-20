@@ -1,43 +1,52 @@
-### Spark NLP Twitter sentiment analys 
+### Spark NLP Twitter sentiment analysis
+#### Main page
+ ![image info](assets/main_page.png )
+ 
+ #### one job page
+ ![image info](assets/job_page.png)
 #### Batch approach.
 ![image info](assets/batch_arch.jpg)
 ###### GCP Storage architecture
 ```bash
-root
-|_models
-  |_v1
-    |_pipeline
-    |_scores.txt
-  |_v2
-    |_pipeline
-    |_scores.txt
-|_results
-  |_query1
-    |_meta.json
-    |_twits.csv
-    |_results.csv
-  |_query2
-    |_meta.json
-    |_twits.csv
-    |_results.csv
-|_scrap_twits_jobs
-  |_query1
-    |_meta.json
-  |_query2
-    |_meta.json
-|_analytics_jobs
-  |_query1
-    |_meta.json
-    |_twits.csv
-  |_query2
-    |_meta.json
-    |_twits.csv
+gs://sentiment-twitter-analys
+    |_models
+      |_v1
+        |_pipeline
+        |_scores.txt
+      |_v2
+        |_pipeline
+        |_scores.txt
+    |_results
+        |_job1
+            |_meta.json
+            |_twits.csv
+            |_results.csv
+        |_job2
+            |_meta.json
+            |_twits.csv
+            |_results.csv
+
+gs://sentiment-twitter-analys-scrap-job
+    |_scrap_twits_jobs
+      |_job1
+        |_meta.json
+      |_job2
+        |_meta.json
+
+gs://sentiment-twitter-analys-compute-job
+    |_analytics_jobs
+      |_job1
+        |_meta.json
+        |_twits.csv
+      |_job2
+        |_meta.json
+        |_twits.csv
 ```
 
 ###### meta.json
 ```
 {  
- "name": "some name",
+ "job_id": "some name",
  "quert": "some qurty phrase in twitter",
  "created_at": "some dat in ISO format",
 }
