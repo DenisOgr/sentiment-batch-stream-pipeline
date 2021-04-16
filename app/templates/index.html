@@ -8,14 +8,14 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
     <title>Twitter sentiment analytics application | Main page</title>
 </head>
 <body>
 {% with errors = get_flashed_messages(category_filter=["errors"]) %}
 {% if errors %}
 <div class="alert alert-danger" role="alert">
-  {{errors[0]}}
+    {{errors[0]}}
 </div>
 {% endif %}
 {% endwith %}
@@ -34,11 +34,25 @@
         <form method="POST" action="/run_job">
             <div class="form-group">
                 <label for="exampleInputEmail1">Word for search</label>
-                <input type="input" minlength="4" maxlength="100" required class="form-control" id="word_for_search"
-                       name="word_for_search"
+                <input type="input" minlength="4" maxlength="100" required class="form-control" id="query"
+                       name="query"
                        placeholder="real donald trump">
                 <small id="emailHelp" class="form-text text-muted">Single word, several words (max 5), hashtag, likes
                     #realDonaldTrump</small>
+            </div>
+            <div class="form-group">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" value="batch" name="job_type" id="job_type_batch" checked>
+                    <label class="form-check-label" for="job_type_batch">
+                        Batch job
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" value="stream" name="job_type" id="job_type_stream">
+                    <label class="form-check-label" for="job_type_stream">
+                        Stream job
+                    </label>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary">Run it</button>
         </form>
@@ -47,7 +61,12 @@
 
 {% for job in jobs %}
 <button type="button" onclick="location.href='/job/{{job}}'" class="btn btn-{{get_random_style()}}" style="margin: 3px">
-    {{job}}
+    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+    {{job[0]}}
+    {% if job[1] == "s" %}
+    <span class="badge bg-danger">stream</span>
+    {% endif %}
+
 </button>
 {% endfor %}
 
@@ -62,5 +81,6 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+
 </body>
 </html>

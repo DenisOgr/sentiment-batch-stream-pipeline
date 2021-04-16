@@ -16,21 +16,22 @@ def main():
 
 @app.route('/run_job', methods=['POST'])
 def run_job():
-    string = request.form['word_for_search']
+    query = request.form['query']
+    job_type = request.form['job_type']
     try:
-        utils.validate(string)
-    except AssertionError as e:
+        utils.validate_query(query)
+        utils.validate_job_type(job_type)
+    except ValueError as e:
         flash(str(e), 'errors')
         return redirect(url_for('main'))
 
-    job_id = utils.get_job_from_string(string)
-    job = utils.get_job(job_id)
+    job = utils.get_job_by_query(query, job_type)
     if job and not job.get_error_path():
-        flash(f"Query: {string} has already been analysed. Job has been skipped.", "info")
-        return redirect(url_for('job', string=string))
+        flash(f"Query: {query} has already been analysed. Job has been skipped.", "info")
+        return redirect(url_for('job', query=query))
 
     job = {
-        'query': string,
+        'query': query,
         'job_id': job_id,
         'created_at': str(datetime.now())
     }
@@ -43,20 +44,20 @@ def run_job():
         return redirect(url_for('main'))
 
 
-@app.route('/job/<string:string>', methods=['GET'])
-def job(string: str):
+@app.route('/job/<string:query>', methods=['GET'])
+def job(query: str):
     message = None
-    if not string.startswith('test'):
-        job_id = utils.get_job_from_string(string)
+    if not query.startswith('test'):
+        job_id = utils.get_job_from_string(query)
     else:
-        job_id = string
+        job_id = query
 
     job = utils.get_job(job_id)
     if not job:
-        message = f'There isn`t job for word: "{string}"'
+        message = f'There isn`t job for word: "{query}"'
     else:
         if job.get_error_path():
-            message = f'Error for job for word: "{string}"'
+            message = f'Error for job for word: "{query}"'
     if message:
         flash(message, 'errors')
         return redirect(url_for('main'))
