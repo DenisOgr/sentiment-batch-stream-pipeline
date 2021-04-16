@@ -1,0 +1,6 @@
+__pycache__
+.gitignore
+.idea
+examples
+deploy.sh
+dev-requirements.txt
